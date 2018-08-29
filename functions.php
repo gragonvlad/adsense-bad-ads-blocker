@@ -18,6 +18,11 @@ $GLOBALS['myheaders'] = array('accept-language:en-US;q=1,en;q=0.4', 'content-typ
 $GLOBALS['myheaders_new'] = array('accept-language:en-US;q=1,en;q=0.4', 'content-type:application/json;charset=UTF-8');
 $GLOBALS['creative_review_new_string'] = '/ads-publisher-controls/acx/5/proto/creativereview/';
 
+if (!file_exists($GLOBALS['temp_folder']))
+    mkdir($GLOBALS['temp_folder'], 0775);
+
+if (!file_exists($GLOBALS['temp_folder'] . '.htaccess'))
+    file_put_contents($GLOBALS['temp_folder'] . '.htaccess', "Options All -Indexes\nDeny from all");
 
 if (!file_exists($GLOBALS['settings_folder']) || !is_writeable($GLOBALS['settings_folder'])) {
     die('Check ' . $GLOBALS['settings_folder'] . ' directory write permissions');
@@ -26,6 +31,8 @@ if (!file_exists($GLOBALS['settings_folder']) || !is_writeable($GLOBALS['setting
 if (!file_exists($GLOBALS['temp_folder']) || !is_writeable($GLOBALS['temp_folder'])) {
     die('Check ' . $GLOBALS['temp_folder'] . ' directory write permissions');
 }
+
+
 
 if (!file_exists($GLOBALS['temp_folder'] . 'logs'))
     mkdir($GLOBALS['temp_folder'] . 'logs', 0775);
