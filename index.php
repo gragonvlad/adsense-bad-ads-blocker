@@ -9,7 +9,7 @@ if (is_data_safely($_SERVER['HTTP_USER_AGENT']))
 $settings_folder = basename($GLOBALS['settings_folder']) . '/';
 $cron_folder = dirname($GLOBALS['settings_folder']);
 $html_sep = '';
-$ver = '4.1'; ?>
+$ver = '4.2'; ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,7 +51,7 @@ if (!isset($set['display_ad_url'])) { ?>
 <? /* settings/*sep*/ ?>
 
 <div class="left_colulmn colulmns">
-	<form method="post" action="<?= @$settings_folder ?>settings_update.php" >
+	<form method="post" action="settings_update.php" >
 
 	<h3>Main Settings (User Manual <a href="http://www.howgadget.com/adsense/kak-zablokirovat-musornye-obyavleniya-v-adsense.html" target="_blank" rel="noreferrer" >here</a>)</h3>
 
@@ -105,19 +105,11 @@ if (!isset($set['display_ad_url'])) { ?>
 
 	<br />
 
-
-<!--
-	<label title="Autofilled list from blocked ads. Second checkbox to show the list here">Check by <a href="<?= @$settings_folder ?>bad_ads_text.php" target="_blank">bad ad text list</a>: <input name="badadlist_check" type="checkbox" value="checked" <?= @$set['badadlist_check'] ?> /> </label><input title="Check to show the list here" name="badadlist_show" type="checkbox" value="checked" <?= @
-$set['badadlist_show'] ?> />(Only for text ads)
-
-	<br />
--->
-
-	<label title="Use ARC search by all words from the list to find bad ads"><span class="red_arrow" >Check by <a href="<?= @$settings_folder ?>search_words.php" target="_blank">Searchwords</a>: </span><input name="searchwords_check" type="checkbox" value="checked" <?= @$set['searchwords_check'] ?> /> </label><input title="Check to show the list here" name="searchwords_show" type="checkbox" value="checked" <?= @
+	<label title="Use ARC search by all words from the list to find bad ads"><span class="red_arrow" >Check by <a href="search_words.php" target="_blank">Searchwords</a>: </span><input name="searchwords_check" type="checkbox" value="checked" <?= @$set['searchwords_check'] ?> /> </label><input title="Check to show the list here" name="searchwords_show" type="checkbox" value="checked" <?= @
 $set['searchwords_show'] ?> />
 
 	<br />
-	<label title="If enable whitelisted ads (if ad contains at least one string from whitelist) will never be blocked, also whitelisted ads will not appear at «clear» list. Second checkbox to show the list here">Use <a href="<?= @$settings_folder ?>whitelist.php" target="_blank">Whitelist</a>: <input name="whitelist" type="checkbox" value="checked" <?= @
+	<label title="If enable whitelisted ads (if ad contains at least one string from whitelist) will never be blocked, also whitelisted ads will not appear at «clear» list. Second checkbox to show the list here">Use <a href="whitelist.php" target="_blank">Whitelist</a>: <input name="whitelist" type="checkbox" value="checked" <?= @
 $set['whitelist'] ?> /></label><input title="Check to show the list here" name="whitelist_show" type="checkbox" value="checked" <?= @
 $set['whitelist_show'] ?> />
 
@@ -262,7 +254,7 @@ $set['disguised_media'] ?>/></label>
 <div class="center_colulmn colulmns">
 
 	<h3>List of Stop Words</h3>
-	<form method="post" action="<?= @$settings_folder ?>list_update.php" >
+	<form method="post" action="list_update.php" >
 
 	<h4>For text and image ads</h4>
 	<textarea name="stopwords_text" id="stopwords_text" class="wordlist" wrap="off" ><?= $stopwords_text . "\n\n\n\n\n\n\n\n\n\n\n\n" ?></textarea>
@@ -362,7 +354,7 @@ $set['disguised_media'] ?>/></label>
 	<?php     if (@$set['num_of_cycles']) { ?>
 	<div class="cycles" >
 		<a href="cycles.php" onclick="start_searching('cycles.php', 'working_frame');" target="working_frame"  ><button><?= @$set['num_of_cycles'] ?>  search cycles</button></a>
-		<a href="cycles.php?searcher=blocked.php" onclick="start_searching('cycles.php?searcher=blocked.php', 'working_frame');" target="working_frame"  ><button><?= @$set['num_of_cycles'] ?>  blocked cycles</button></a>
+		<? /*<a href="cycles.php?searcher=blocked.php" onclick="start_searching('cycles.php?searcher=blocked.php', 'working_frame');" target="working_frame"  ><button><?= @$set['num_of_cycles'] ?>  blocked cycles</button></a> */ ?>
 	</div>
 	<?php     } ?>
 

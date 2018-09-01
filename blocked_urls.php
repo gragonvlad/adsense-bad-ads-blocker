@@ -21,9 +21,7 @@ unset($first_result);
 
 get_xsrf_token();
 
-
 $list = get_blocked_urls_list();
-
 
 foreach ($list->result->{1} as $url_obj)
     $urls[] = $url_obj->{3}->{1};
@@ -32,9 +30,11 @@ sort($urls);
 
 $out = '';
 $i = 0;
-foreach ($urls as $url) {
 
-    if (@$_POST['confirmation'] == 'agree') {
+if (@$_POST['confirmation'] == 'agree') {
+
+    foreach ($urls as $url) {
+
         $result = block_unblock_url($url, 'unblock');
         if (is_object($result->error))
             die('<p>' . $result->error->code . ' ' . $result->error->message . '</p>');
@@ -43,26 +43,47 @@ foreach ($urls as $url) {
         @$result = $result[0]->{4};
         if ($result == 0) {
             $result = ' unblocked';
-            $out .= $url . $result . '<br /><br />';
+            $out .= $url . $result . "<br><br>\n";
         }
         if ($i >= 100)
             break;
-    } else {
-        $blocked_time = '';
-        $filename = $GLOBALS['temp_folder'] . 'autoblocked_domains/' . md5($url);
-        if (file_exists($filename)) {
-            $blocked_time = file_get_contents($filename);
-            $blocked_time = date("j.m.Y G:i:s", $blocked_time);
-        }
 
-        $out .= "<a href=\"http://nullrefer.com/?http://$url\" target=\"_blank\">$url</a> <a href=\"blocker_url.php?act=unblock&url=" . rawurlencode($url) . "\" target=\"working_frame\" class=\"unblock unblock_acc\" title=\"Unblock URL\" ><img src=\"img/unblock.png\" />Unblock</a> <a href=\"blocker_url.php?act=block&url=" .
-            rawurlencode($url) . "\" target=\"working_frame\" class=\"unblock unblock_acc\" title=\"Block URL\" ><img src=\"img/block.png\" />Block</a> $blocked_time<br />";
-
-
+        $i++;
     }
 
-    $i++;
+} else {
+
+    $files_with_timestamp = scandir($GLOBALS['temp_folder'] . 'autoblocked_urls/');
+    unset($files_with_timestamp[0], $files_with_timestamp[1]);      //removes «.» and «..»
+
+    foreach ($files_with_timestamp as $file_with_timestamp) {
+        $blocked_time = file_get_contents($GLOBALS['temp_folder'] . 'autoblocked_urls/' . $file_with_timestamp);
+        $blocked_time = date("j.m.Y G:i:s", $blocked_time);
+        $blocked_urls[$file_with_timestamp] = $blocked_time;
+    }
+
+    foreach ($urls as $url) {
+
+        $md5_url = md5($url);
+        $blocked_time = ' <span title="First time blocked">' . $blocked_urls[$md5_url] . '</span>';
+        unset($blocked_urls[$md5_url]);
+
+        $out .= "<a href=\"http://nullrefer.com/?http://$url\" target=\"_blank\">$url</a> <a href=\"blocker_url.php?act=unblock&url=" . rawurlencode($url) . 
+        "\" target=\"working_frame\" class=\"unblock unblock_acc\" title=\"Unblock URL\" ><img src=\"img/unblock.png\" />Unblock</a> <a href=\"blocker_url.php?act=block&url=" .
+        rawurlencode($url) . "\" target=\"working_frame\" class=\"unblock unblock_acc\" title=\"Block URL\" ><img src=\"img/block.png\" />Block</a>$blocked_time<br>\n";
+
+        $i++;
+    }
+
+    if(count($blocked_urls)>0) {
+        foreach ($blocked_urls as $file_with_timestamp => $time) {
+            unlink($GLOBALS['temp_folder'] . 'autoblocked_urls/' . $file_with_timestamp);            
+            echo 'old file ' . $file_with_timestamp . " was deleted. <br />\n";
+        }
+    echo "<br>\n";
+    }
 }
+
 
 
 $exe_time = time() - $start_time;
@@ -101,13 +122,13 @@ a.block, a.unblock {
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
-a.block:active, a.unblock:active { 
+a.block:active, a.unblock:active {
 	background-image: -webkit-gradient(linear,left top,left bottom,from(#f6f6f6),to(#f1f1f1));
     background-image: -webkit-linear-gradient(top,#f6f6f6,#f1f1f1);
     background-color: #f6f6f6;
 }
 
-a.block:hover, a.unblock:hover { 
+a.block:hover, a.unblock:hover {
     background-image: -webkit-gradient(linear,left top,left bottom,from(#f8f8f8),to(#f1f1f1));
     background-image: -webkit-linear-gradient(top,#f8f8f8,#f1f1f1);
     background-color: #f8f8f8;
@@ -133,28 +154,28 @@ input[type="submit"], button { max-width: 200px; margin: 3px; }
 <?php if (!isset($_POST['confirmation'])) { ?>
 
 	<form method="post" target="working_frame" >
-	
+
 	<label>
-		Do you want to unblock all URLs?<br />
-		You should type «agree» to confirm.<br />
-		There is 100 URLs per time limitation.<br />
-		<input type="text" name="confirmation" placeholder="Type «agree»" required autocomplete="off"/><br />
+		Do you want to unblock all URLs?<br>
+		You should type «agree» to confirm.<br>
+		There is 100 URLs per time limitation.<br>
+		<input type="text" name="confirmation" placeholder="Type «agree»" required autocomplete="off"/><br>
 	</label>
-	<br />
+	<br>
 
 	<input class="submit" type="submit" value="Start unblocking process" />
 
 	</form>
-	
+
 	<form method="post" target="working_frame" action="blocker_url.php" class="form_for_urls">
 
-	http://<br />
+	http://<br>
 	<textarea name="urls" class="area_for_urls"></textarea>
 
 	<input class="submit" type="submit" value="Block URLs" />
 
 	</form>
-	
+
 <h3>Total <?= $i ?> URLs blocked</h3>
 
 <?php } ?>

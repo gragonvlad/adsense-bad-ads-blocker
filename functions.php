@@ -40,8 +40,8 @@ if (!file_exists($GLOBALS['temp_folder'] . 'logs'))
 if (!file_exists($GLOBALS['temp_folder'] . 'autoblocked_accs'))
     mkdir($GLOBALS['temp_folder'] . 'autoblocked_accs', 0775);
 
-if (!file_exists($GLOBALS['temp_folder'] . 'autoblocked_domains'))
-    mkdir($GLOBALS['temp_folder'] . 'autoblocked_domains', 0775);
+if (!file_exists($GLOBALS['temp_folder'] . 'autoblocked_urls'))
+    mkdir($GLOBALS['temp_folder'] . 'autoblocked_urls', 0775);
 
 if (!file_exists($GLOBALS['temp_folder'] . 'accs_ads'))
     mkdir($GLOBALS['temp_folder'] . 'accs_ads', 0775);
@@ -102,7 +102,7 @@ if ($set['whitelist'])
 
 
 if ($set['arc'] == 'adx') {
-    //@$GLOBALS['pub_id']=file_get_contents($GLOBALS['temp_folder'].'pub_id.txt');			// pub_id_adx
+    //@$GLOBALS['pub_id']=file_get_contents($GLOBALS['temp_folder'].'pub_id.txt');        // pub_id_adx
     $GLOBALS['pub_id'] = $set['pub_id_adx'];
     @$GLOBALS['nc'] = file_get_contents($GLOBALS['temp_folder'] . 'nc_adx.txt');
     if ($GLOBALS['nc'] == '') {
@@ -117,10 +117,10 @@ if ($set['arc'] == 'adx') {
 
 /**
  *
- **/
+**/
 
 
-function is_data_safely($input_data) 
+function is_data_safely($input_data)
 {
     $ret = true;
     if (strpos($input_data, "<?") !== false)
@@ -153,10 +153,10 @@ function is_data_safely($input_data)
 
 /**
  **
- **/
+**/
 
 
-function get_network_code_for_adx() 
+function get_network_code_for_adx()
 {
     $result = curl_all('https://admanager.google.com/', '', $GLOBALS['myheaders'], false, '', true, false, $GLOBALS['cookie_file'], $GLOBALS['useragent']);
     $result_arr = explode("\n", $result);
@@ -177,10 +177,10 @@ function get_network_code_for_adx()
 
 /**
  *
- **/
+**/
 
 
-function metagwt2array($metahtml) 
+function metagwt2array($metahtml)
 {
     $dom = new DOMDocument('1.0', 'UTF-8');
     @$dom->loadHTML($metahtml);
@@ -199,10 +199,10 @@ function metagwt2array($metahtml)
 
 /**
  **
- **/
+**/
 
 
-function hex_repl($html) 
+function hex_repl($html)
 {
     $i = 256;
     while ($i >= 0) {
@@ -216,10 +216,10 @@ function hex_repl($html)
 
 /**
  **
- **/
+**/
 
 
-function get_url_from_text_ad($html) 
+function get_url_from_text_ad($html)
 {
     $list = explode('buildAdSlot(', $html, 2);
     $script_with = $list[1];
@@ -237,10 +237,10 @@ function get_url_from_text_ad($html)
 
 /**
  **
- **/
+**/
 
 
-function get_2level_domain($url) 
+function get_2level_domain($url)
 {
     $url = parse_url($url);
     $domain = explode('.', $url['host']);
@@ -262,10 +262,10 @@ function get_2level_domain($url)
 
 /**
  **
- **/
+**/
 
 
-function count_redirects($url) 
+function count_redirects($url)
 {
     $domains[] = mb_strtolower(get_2level_domain($url), 'UTF-8');
 
@@ -331,10 +331,10 @@ function count_redirects($url)
 
 /**
  **
- **/
+**/
 
 
-function find_disguised_latin($ad) 
+function find_disguised_latin($ad)
 {
     $text = trim($ad['header1']);
     if (isset($ad['header2']))
@@ -368,10 +368,10 @@ function find_disguised_latin($ad)
 
 /**
  **
- **/
+**/
 
 
-function lat_replace($text) 
+function lat_replace($text)
 {
     $lat = array('a', 'c', 'e', 'o', 'n', 'p', 'x', 'u', 'y', 'b', 'h', 'k', 'm', 't', 'μ', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ā', 'ă', 'ą', 'ò', 'ó', 'ô', 'õ', 'ö', 'ć', 'ĉ', 'ċ', 'č', 'ē', 'ĕ', 'ė', 'ę', 'ě', 'è', 'é', 'ê', 'ά', 'ᾁ', 'ᾉ', 'ⱪ', 'ό');
     $cyr = array('а', 'с', 'е', 'о', 'п', 'р', 'х', 'и', 'у', 'в', 'н', 'к', 'м', 'т', 'м', 'а', 'а', 'а', 'а', 'а', 'а', 'а', 'а', 'а', 'о', 'о', 'о', 'о', 'о', 'с', 'с', 'с', 'с', 'е', 'е', 'е', 'е', 'е', 'е', 'е', 'е', 'а', 'а', 'а', 'к', 'о');
@@ -408,20 +408,20 @@ function lat_replace($text)
 
 /**
  **
- **/
+**/
 
 
-function redi_curl_get($url, $referer, $myheaders, $getheader, $getbody) 
+function redi_curl_get($url, $referer, $myheaders, $getheader, $getbody)
 {
     return curl_all($url, $referer, $myheaders, false, false, $getheader, $getbody, false, $GLOBALS['m_useragent']);
 }
 
-function curl_get($url, $referer, $myheaders) 
+function curl_get($url, $referer, $myheaders)
 {
     return curl_all($url, $referer, $myheaders, false, false, false, true, $GLOBALS['cookie_file'], $GLOBALS['useragent']);
 }
 
-function curl_post($url, $postfields, $referer, $myheaders) 
+function curl_post($url, $postfields, $referer, $myheaders)
 {
     return curl_all($url, $referer, $myheaders, true, $postfields, false, true, $GLOBALS['cookie_file'], $GLOBALS['useragent']);
 }
@@ -429,10 +429,10 @@ function curl_post($url, $postfields, $referer, $myheaders)
 
 /**
  **
- **/
+**/
 
 
-function curl_all($url, $referer, $myheaders, $post, $postfields, $getheader, $getbody, $cookiefile, $useragent) 
+function curl_all($url, $referer, $myheaders, $post, $postfields, $getheader, $getbody, $cookiefile, $useragent)
 {
 
     $ch = curl_init();
@@ -468,10 +468,10 @@ function curl_all($url, $referer, $myheaders, $post, $postfields, $getheader, $g
 
 /**
  **
- **/
+**/
 
 
-function get_ad_type($html_string) 
+function get_ad_type($html_string)
 {
     $type = 'undefined';
     if (mb_strpos($html_string, 'Multi-format', 0, 'UTF-8') !== false)
@@ -491,10 +491,10 @@ function get_ad_type($html_string)
 
 /**
  **
- **/
+**/
 
 
-function get_ad($url, $ad_type) 
+function get_ad($url, $ad_type)
 {
     $ad_html = curl_get($url, $GLOBALS['arc_tab_req_string'], '');
     if ($ad_html) {
@@ -602,10 +602,10 @@ function get_ad($url, $ad_type)
 
 /**
  **
- **/
+**/
 
 
-function load_single_html_ad($url) 
+function load_single_html_ad($url)
 {
     $ad_html = curl_get($url, $GLOBALS['arc_tab_req_string'], '');
 
@@ -663,10 +663,10 @@ function load_single_html_ad($url)
 
 /**
  **
- **/
+**/
 
 
-function multimedia_ad15($html) 
+function multimedia_ad15($html)
 {
     $list = explode('</head>', $html);
     $ad_html = array_pop($list);
@@ -705,10 +705,10 @@ function multimedia_ad15($html)
 
 /**
  **
- **/
+**/
 
 
-function multimedia_ad25_26($html) 
+function multimedia_ad25_26($html)
 {
     $list = explode('</head>', $html);
     $ad_html = array_pop($list);
@@ -756,10 +756,10 @@ function multimedia_ad25_26($html)
 
 /**
  **
- **/
+**/
 
 
-function text_ad($html) 
+function text_ad($html)
 {
     $list = explode('</head>', $html);
     $ad_html = array_pop($list);
@@ -771,17 +771,31 @@ function text_ad($html)
 
     foreach ($dom->getElementsByTagName('a') as $a_node) {
         //if( stripos($a_node->getAttribute('class'), 'rhbackground')!==false ) $ad['fulltext']=$a_node->textContent;
-        if (stripos($a_node->getAttribute('class'), 'rhtitleline1') !== false)
+        if (stripos($a_node->getAttribute('class'), 'rhtitleline1') !== false) {
             $ad['header1'] = $a_node->textContent;
-        if (stripos($a_node->getAttribute('class'), 'rhtitleline2') !== false)
+            continue;
+        }
+
+        if (stripos($a_node->getAttribute('class'), 'rhtitleline2') !== false) {
             $ad['header2'] = $a_node->textContent;
-        if (stripos($a_node->getAttribute('class'), 'rhbody') !== false)
+            continue;
+        }
+            $ad['header2'] = $a_node->textContent;
+        if (stripos($a_node->getAttribute('class'), 'rhbody') !== false) {
             $ad['body'] = $a_node->textContent;
+            continue;
+        }
+
         //Old ads (with just 1 header) support
-        if (stripos($a_node->getAttribute('class'), 'rhtitle ') !== false || stripos($a_node->getAttribute('class'), 'rhtitle"') !== false)
+        if (stripos($a_node->getAttribute('class'), 'rhtitle ') !== false || stripos($a_node->getAttribute('class'), 'rhtitle"') !== false) {
             $ad['header1'] = $a_node->textContent;
-        if (stripos($a_node->getAttribute('class'), 'rhurl ') !== false || stripos($a_node->getAttribute('class'), 'rhurl"') !== false)
+            continue;
+        }
+
+        if (stripos($a_node->getAttribute('class'), 'rhurl ') !== false || stripos($a_node->getAttribute('class'), 'rhurl"') !== false) {
             $ad['displayUrl'] = $a_node->textContent;
+            continue;
+        }
     }
 
     $fulltext = implode(' ', $ad);
@@ -797,10 +811,10 @@ function text_ad($html)
 
 /**
  **
- **/
+**/
 
 
-function html5_1_ad($html) 
+function html5_1_ad($html)
 {
     $list = explode('var adData = {', $html, 2);
     if ($list[1])
@@ -884,10 +898,10 @@ function html5_1_ad($html)
 
 /**
  **
- **/
+**/
 
 
-function html5_2_ad($html) 
+function html5_2_ad($html)
 {
     $list = explode('previewservice.insertPreviewHtmlUrl(', $html, 2);
     if ($list[1])
@@ -915,10 +929,10 @@ function html5_2_ad($html)
 
 /**
  **
- **/
+**/
 
 
-function multiformat_ad_62_long_header($html) 
+function multiformat_ad_62_long_header($html)
 {
     $list = explode('data-rh-set-type="62">', $html);
     $ad_html = array_pop($list);
@@ -945,9 +959,9 @@ function multiformat_ad_62_long_header($html)
 
 /**
  **
- **/
+**/
 
-function multiformat_ad($html) 
+function multiformat_ad($html)
 {
     $list = explode("var adData = JSON.parse('", $html, 2);
     if ($list[1])
@@ -992,7 +1006,7 @@ function multiformat_ad($html)
     return $ad;
 }
 
-function multiformat_ad_old35($html) 
+function multiformat_ad_old35($html)
 {
     $list = explode("'adData': [", $html, 2);
     if ($list[1])
@@ -1034,10 +1048,10 @@ function multiformat_ad_old35($html)
 
 /**
  **
- **/
+**/
 
 
-function get_stats($ad_id) 
+function get_stats($ad_id)
 {
     $inner_params = '[{"1":"' . $ad_id . '"}]';
     $params = '{"1":' . $inner_params . '}';
@@ -1064,30 +1078,34 @@ function get_stats($ad_id)
 
 /**
  **
- **/
+**/
 
 
-function get_advertisers_list() 
-{ // function for get list of all blocked AdWords acconuts.
+function get_advertisers_list()       // function for get list of all blocked AdWords acconuts.
+{
     $params = '{"1":"ca-' . $GLOBALS['pub_id'] . '"}';
 
-    if ($GLOBALS['set_gl']['arc'] == 'arc5')
+    if ($GLOBALS['set_gl']['arc'] == 'arc5') {
         $result = creative_review_new('GetAdWordsAdvertiserDecisions', $params);
-    else
+        $result_keyword = 'default';
+    }
+    else {
         $result = creative_review('getAdWordsAdvertiserDecisions', $params);
-
+        $result_keyword = 'result';
+    }
     unset($params);
+    $result = $result->$result_keyword->{1};
     return $result;
 }
 
 
 /**
  **
- **/
+**/
 
 
-function get_blocked_urls_list() 
-{ // function for get list of all blocked urls.
+function get_blocked_urls_list()       // function for get list of all blocked urls.
+{
     $params = '{"1":[{"1":0,"2":"ca-' . $GLOBALS['pub_id'] . '"}],"2":""}';
 
     $result = blocking_controls('getAdvertiserUrlApprovals', $params);
@@ -1098,11 +1116,11 @@ function get_blocked_urls_list()
 
 /**
  **
- **/
+**/
 
 
-function block_unblock_url($url, $unblock = 'unblock') 
-{ // block and unblock urls
+function block_unblock_url($url, $unblock = 'unblock')       // block and unblock urls
+{
     if ($unblock == 'unblock')
         $mean_digit = '0';
     else
@@ -1115,7 +1133,7 @@ function block_unblock_url($url, $unblock = 'unblock')
 
     $result = blocking_controls('setAdvertiserUrlApprovals', $params);
 
-    unlink($GLOBALS['temp_folder'] . 'autoblocked_domains/' . md5($url));
+    unlink($GLOBALS['temp_folder'] . 'autoblocked_urls/' . md5($url));
 
     unset($params);
     return $result;
@@ -1124,10 +1142,10 @@ function block_unblock_url($url, $unblock = 'unblock')
 
 /**
  **
- **/
+**/
 
 
-function add_blocked_url($urls) 
+function add_blocked_url($urls)
 {
     $urls = str_replace('//', '', $urls);
     $urls = str_replace('http:', '', $urls);
@@ -1141,11 +1159,15 @@ function add_blocked_url($urls)
 
         $url = trim($url);
         $url = rtrim($url, "/");
+        if (!$url) continue;
+        if (mb_strpos($url, '.', 0, 'UTF-8')===false) continue;
         $jsoned_url[] = '{"1":{"1":0,"2":"ca-' . $GLOBALS['pub_id'] . '"},"2":"' . $url . '","4":1}';
 
-        $filename = $GLOBALS['temp_folder'] . 'autoblocked_domains/' . md5($url);
+        $filename = $GLOBALS['temp_folder'] . 'autoblocked_urls/' . md5($url);
         if (!file_exists($filename))
             file_put_contents($filename, time());
+
+        $GLOBALS['blocked_urls'][] = $url;
     }
 
     $params = '{"1":[' . implode(',', $jsoned_url) . ']}';
@@ -1160,11 +1182,11 @@ function add_blocked_url($urls)
 
 /**
  **
- **/
+**/
 
 
-function unblock_adwords_account($adv_id) 
-{ // unblock AdWords account function for list of blocked advertisers
+function unblock_adwords_account($adv_id)    // unblock AdWords account function for list of blocked advertisers
+{
     $inner_params = '[{"1":"' . $adv_id . '"}]';
     $params = '{"1":' . $inner_params . '}';
 
@@ -1179,8 +1201,8 @@ function unblock_adwords_account($adv_id)
     return $result;
 }
 
-function block_adwords_account($adv_id) 
-{ // block AdWords account function for list of blocked advertisers
+function block_adwords_account($adv_id)    // block AdWords account function for list of blocked advertisers
+{
     $inner_params = '[{"1":{"1":"' . $adv_id . '"},"2":1}]';
     $params = '{"2":' . $inner_params . '}';
 
@@ -1198,11 +1220,11 @@ function block_adwords_account($adv_id)
 
 /**
  **
- **/
+**/
 
 
-function block_ad_account($ad_id, $unblock = 0, $header = '', $adv_id = '', $adv_name = '') 
-{ // block and unblock function
+function block_ad_account($ad_id, $unblock = 0, $header = '', $adv_id = '', $adv_name = '')    // block and unblock function
+{
     if ($unblock)
         $mean_digit = '0';
     else
@@ -1228,12 +1250,13 @@ function block_ad_account($ad_id, $unblock = 0, $header = '', $adv_id = '', $adv
         unset($result);
         $result = unblock_adwords_account($adv_long_id);
     } else {
-        file_put_contents($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $adv_id, $adv_long_id);
         if ($adv_name)
             $accs_ads_filename = md5($adv_name);
         else
             $accs_ads_filename = $adv_id;
         file_put_contents($GLOBALS['temp_folder'] . 'accs_ads/' . $accs_ads_filename, $header . "\n", FILE_APPEND);
+        if(!file_exists($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $accs_ads_filename))
+            file_put_contents($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $accs_ads_filename, $adv_long_id);        
     }
 
     unset($inner_params, $params);
@@ -1243,11 +1266,11 @@ function block_ad_account($ad_id, $unblock = 0, $header = '', $adv_id = '', $adv
 
 /**
  **
- **/
+**/
 
 
-function block_ad($ad_id, $key, $unblock = 0) 
-{ // block and unblock function
+function block_ad($ad_id, $key, $unblock = 0)     // block and unblock function
+{
     if ($unblock)
         $mean_digit = '0';
     else
@@ -1270,10 +1293,10 @@ function block_ad($ad_id, $key, $unblock = 0)
 
 /**
  **
- **/
+**/
 
 
-function list_ad($ad, $ad_index, $found) 
+function list_ad($ad, $ad_index, $found)
 {
     $nl = "\n";
 
@@ -1315,7 +1338,7 @@ function list_ad($ad, $ad_index, $found)
         if ($found)
             $report_style = '';
 
-        $report = $nl . '<br /><a ' . $report_style . 'id="' . $ad_report . '" onclick="insert_result_frame(this.parentNode);" href="report_ad.php?ad_id=' . $ad_id . '" target="result_frame" >Report ad</a>';
+        $report = $nl . "<br>\n<a " . $report_style . 'id="' . $ad_report . '" onclick="insert_result_frame(this.parentNode);" href="report_ad.php?ad_id=' . $ad_id . '" target="result_frame" >Report ad</a>';
         $for_block_button = " document.getElementById('$ad_report').removeAttribute('style');";
         $for_unblock_button = " document.getElementById('$ad_report').style.display='none';";
     }
@@ -1364,7 +1387,7 @@ function list_ad($ad, $ad_index, $found)
     $ad_header = '<div class="ad_header"><span class="adv_id">' . $ad['adv_name'] . ' ' . $ad['adv_id'] . '</span> ' . $stopword . '</div>' . $nl;
     //title="'.$ad['fulltext'].'"
 
-    $header2 = '<br /><span>' . $whitelist_header2 . $ad['header2'] . '</span>';
+    $header2 = "<br>\n<span>" . $whitelist_header2 . $ad['header2'] . '</span>';
     $header = '<h2>' . $whitelist_header1 . $header1 . $header2 . '</h2>' . $nl;
 
     $text = '<div class="ad">' . $nl . $whitelist_ad . $nl . $ad_header . $header . '<p class="body" title="ad text">' . $whitelist_body . $ad['body'] . '</p>' . $nl . '<p class="ad_url" title="Full ad URL">' . $ad_url . '</p>' . $nl . $url . '</div><span class="block_buttons">' . $block_ad .
@@ -1392,10 +1415,10 @@ function list_ad($ad, $ad_index, $found)
 
 /**
  **
- **/
+**/
 
 
-function is_ad_whitelisted($ad_fulltext) 
+function is_ad_whitelisted($ad_fulltext)
 {
     foreach ($GLOBALS['whitelist'] as $whitestring) {
         if ($whitestring)
@@ -1410,10 +1433,10 @@ function is_ad_whitelisted($ad_fulltext)
 
 /**
  **
- **/
+**/
 
 
-function mark_ads_reviewed($ad_id) 
+function mark_ads_reviewed($ad_id)
 {
     $first_id = $ad_id[0];
     foreach ($ad_id as $id)
@@ -1442,10 +1465,10 @@ function mark_ads_reviewed($ad_id)
 
 /**
  **
- **/
+**/
 
 
-function ReportPolicyViolation($adv_id) 
+function ReportPolicyViolation($adv_id)
 { // Report bad ads function
     if ($GLOBALS['set_gl']['arc'] != 'arc5')
         return 'Use new ARC!'; //Works only with new ARC
@@ -1460,10 +1483,10 @@ function ReportPolicyViolation($adv_id)
 
 /**
  **
- **/
+**/
 
 
-function creative_review_new($method, $params) 
+function creative_review_new($method, $params)
 {
     if (!isset($GLOBALS['xsrftoken_new']))
         $GLOBALS['xsrftoken_new'] = file_get_contents($GLOBALS['temp_folder'] . 'xsrftoken_new.txt');
@@ -1510,10 +1533,10 @@ function creative_review_new($method, $params)
 
 /**
  **
- **/
+**/
 
 
-function creative_review($method, $params) 
+function creative_review($method, $params)
 {
     $xsrftoken = file_get_contents($GLOBALS['xsrftoken_file']);
 
@@ -1542,10 +1565,10 @@ function creative_review($method, $params)
 
 /**
  **
- **/
+**/
 
 
-function blocking_controls($method, $params) 
+function blocking_controls($method, $params)
 {
     $xsrftoken = file_get_contents($GLOBALS['xsrftoken_file']);
 
@@ -1574,10 +1597,10 @@ function blocking_controls($method, $params)
 
 /**
  **
- **/
+**/
 
 
-function get_xsrf_token() 
+function get_xsrf_token()
 {
     if ($GLOBALS['set_gl']['arc'] == 'adx') {
         $url = 'https://admanager.google.com/ads-publisher-controls/drx/4/creativereview?pc=ca-' . $GLOBALS['pub_id'] . '&nc=' . $GLOBALS['nc'] . '&hl=en';
@@ -1603,10 +1626,10 @@ function get_xsrf_token()
 
 /**
  **
- **/
+**/
 
 
-function get_xsrf_token_new() 
+function get_xsrf_token_new()
 {
     $url = 'https://www.google.com/ads-publisher-controls/acx/5/darc/loader?onearcClient=adsense&pc=ca-' . $GLOBALS['pub_id'] . '&tpid=' . $GLOBALS['pub_id'] . '&hl=en';
     $result = curl_post($url, '', $GLOBALS['new_arc_tab_req_string'], $GLOBALS['myheaders_new']); // Requesting access tokens in JS file
@@ -1629,23 +1652,23 @@ function get_xsrf_token_new()
 
 /**
  **
- **/
+**/
 
 
-function get_ad_list($folder) 
+function get_ad_list($folder)
 {
     if ($folder == 'blogspot' || $folder == 'clear' || $folder == 'redirect' || $folder == 'word' || $folder == 'disguised') {
         if (!file_exists($GLOBALS['temp_folder'] . $folder))
             mkdir($GLOBALS['temp_folder'] . $folder, 0775);
         $ad_files = scandir($GLOBALS['temp_folder'] . $folder);
-        unset($ad_files[0], $ad_files[1]); //removes . and ..
+        unset($ad_files[0], $ad_files[1]); //removes «.» and «..»
 
         $ads_text = '';
         $num_of_ads = count($ad_files);
         foreach ($ad_files as $ad_file) {
 
             $time = explode('.', $ad_file);
-            $time = '<span title="When was checked" class="date_time">' . date("d.m.Y", $time[0]) . '<br>' . date("H:i:s", $time[0]) . '</span>';
+            $time = '<span title="When was checked" class="date_time">' . date("d.m.Y", $time[0]) . "<br>\n" . date("H:i:s", $time[0]) . '</span>';
             $trash = '<span><a title="Delete this ad" class="trash" onclick="insert_result_frame(this); close_ad(this);" href="delete.php?folder=' . $folder . '&ad_file=' . rawurlencode($ad_file) . '" target="result_frame"><img src="img/trash.gif" /></a></span>';
             $ads_text .= '<div class="ad_container" >' . file_get_contents($GLOBALS['temp_folder'] . $folder . '/' . $ad_file) . $time . $trash . '</div>';
         }
@@ -1657,10 +1680,10 @@ function get_ad_list($folder)
 
 /**
  **
- **/
+**/
 
 
-function remove_ad_files($folder, $ad_file) 
+function remove_ad_files($folder, $ad_file)
 {
     if ($folder == 'blogspot' || $folder == 'clear' || $folder == 'redirect' || $folder == 'word' || $folder == 'disguised') {
         if ($ad_file) {
@@ -1668,7 +1691,7 @@ function remove_ad_files($folder, $ad_file)
                 $result = unlink($GLOBALS['temp_folder'] . $folder . '/' . $ad_file);
         } else {
             $ad_files = scandir($GLOBALS['temp_folder'] . $folder);
-            unset($ad_files[0], $ad_files[1]); //removes . and ..
+            unset($ad_files[0], $ad_files[1]);   //removes «.» and «..»
             foreach ($ad_files as $ad_file) {
                 $result = unlink($GLOBALS['temp_folder'] . $folder . '/' . $ad_file);
                 if (!$result)
@@ -1683,10 +1706,10 @@ function remove_ad_files($folder, $ad_file)
 
 /**
  **
- **/
+**/
 
 
-function unblock_old_accounts($age) 
+function unblock_old_accounts($age)
 {
     if (file_exists($GLOBALS['temp_folder'] . 'last_old_unblock')) {
         $last_old_unblock_time = time() - filemtime($GLOBALS['temp_folder'] . 'last_old_unblock');
@@ -1694,30 +1717,40 @@ function unblock_old_accounts($age)
             return false;
     }
 
+    $advertisers_list = get_advertisers_list();
+
+    foreach ($advertisers_list as $adv_obj) {
+        $adv_long_id = $adv_obj->{1}->{1}->{1};
+        if (@$adv_obj->{2})
+            $acc_name = md5($adv_obj->{2});
+        else
+            $acc_name = $adv_obj->{3};
+        $adv_long_ids[$acc_name]=$adv_long_id;
+    }
+    
     $acc_files = scandir($GLOBALS['temp_folder'] . 'autoblocked_accs');
+    unset($acc_files[0], $acc_files[1]);      //removes «.» and «..»
 
     $count = 0;
     foreach ($acc_files as $acc_file) {
-        if ($acc_file != '.' && $acc_file != '..') {
-            $acc_age = time() - filemtime($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $acc_file);
-            $acc_age = $acc_age / 3600 / 24;
-            if ($acc_age > $age) {
-                $adv_long_id = file_get_contents($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $acc_file);
-                $id_len = strlen($adv_long_id);
-                if ($id_len > 100) {
+        $acc_age = time() - filemtime($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $acc_file);
+        $acc_age = $acc_age / 3600 / 24;
+        if ($acc_age > $age) {
+            $adv_long_id = $adv_long_ids[$acc_file];
+            $id_len = strlen($adv_long_id);
+            if ($id_len > 100) {
+                if ($id_len != 104 && $id_len != 108 && $id_len != 120)
                     $id_len = check_ad_id_length($id_len);
-                    if ($id_len == 104 || $id_len == 108 || $id_len == 120)
-                        block_ad_account($adv_long_id, 1);
-                } else {
+                block_ad_account($adv_long_id, 1);
+            } else {
+                if ($id_len != 36 && $id_len != 40 && $id_len != 56)
                     $id_len = check_adv_id_length($id_len);
-                    if ($id_len == 36 || $id_len == 40 || $id_len == 56)
-                        unblock_adwords_account($adv_long_id);
-                }
-
-                unlink($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $acc_file);
-                unlink($GLOBALS['temp_folder'] . 'accs_ads/' . $acc_file);
-                $count++;
+                unblock_adwords_account($adv_long_id);
             }
+
+            unlink($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $acc_file);
+            unlink($GLOBALS['temp_folder'] . 'accs_ads/' . $acc_file);
+            $count++;
         }
     }
 
@@ -1731,10 +1764,10 @@ function unblock_old_accounts($age)
 
 /**
  **
- **/
+**/
 
 
-function is_still_log_in() 
+function is_still_log_in()
 {
     @$cookies = file_get_contents($GLOBALS['cookie_file']);
     if (stripos($cookies, 'SIDCC') !== false)
@@ -1746,10 +1779,10 @@ function is_still_log_in()
 
 /**
  **
- **/
+**/
 
 
-function get_paid_stats($html) 
+function get_paid_stats($html)
 {
     $list = explode('bruschettaMetadata = \'', $html, 2);
     $script_with = $list[1];
@@ -1762,10 +1795,10 @@ function get_paid_stats($html)
 
 /**
  **
- **/
+**/
 
 
-function create_log($result, $filename) 
+function create_log($result, $filename)
 {
     if ($result != $GLOBALS['result_tmp']) {
         file_put_contents($GLOBALS['temp_folder'] . 'logs/' . $filename . time(), $result);
@@ -1777,10 +1810,10 @@ function create_log($result, $filename)
 
 /**
  **
- **/
+**/
 
 
-function getmicrotime() 
+function getmicrotime()
 {
     $list = explode(" ", microtime());
     $usec = (string )round($list[0], 3) * 1000;
@@ -1791,10 +1824,10 @@ function getmicrotime()
 
 /**
  **
- **/
+**/
 
 
-function remove_old_files($days) 
+function remove_old_files($days)
 {
     if (file_exists($GLOBALS['temp_folder'] . 'last_clean')) {
         $last_clean_time = time() - filemtime($GLOBALS['temp_folder'] . 'last_clean');
@@ -1802,9 +1835,9 @@ function remove_old_files($days)
             return false;
     }
 
-    $folders[] = 'accs_ads';
-    $folders[] = 'autoblocked_accs';
-    //$folders[] = 'autoblocked_domains';
+    //$folders[] = 'accs_ads'; //self-cleaning is
+    //$folders[] = 'autoblocked_accs'; //self-cleaning is
+    //$folders[] = 'autoblocked_urls'; //self-cleaning is
     $folders[] = 'logs';
     $folders[] = 'blogspot';
     $folders[] = 'clear';
@@ -1818,15 +1851,14 @@ function remove_old_files($days)
     foreach ($folders as $folder) {
 
         $files = scandir($GLOBALS['temp_folder'] . $folder);
+        unset($files[0], $files[1]);      //removes «.» and «..»
 
         foreach ($files as $file) {
-            if ($file != '.' && $file != '..') {
-                $file_age = time() - filemtime($GLOBALS['temp_folder'] . $folder . '/' . $file);
+            $file_age = time() - filemtime($GLOBALS['temp_folder'] . $folder . '/' . $file);
 
-                if ($file_age > $age) {
-                    unlink($GLOBALS['temp_folder'] . $folder . '/' . $file);
-                    $count++;
-                }
+            if ($file_age > $age) {
+                unlink($GLOBALS['temp_folder'] . $folder . '/' . $file);
+                $count++;
             }
         }
     }
@@ -1853,10 +1885,10 @@ function remove_old_files($days)
 
 /**
  **
- **/
+**/
 
 
-function check_ad_id_length($id_len) 
+function check_ad_id_length($id_len)
 {
     if ($id_len != 104 && $id_len != 108 && $id_len != 120) {
         if ($GLOBALS['set_gl']['arc'] == 'arc5')
@@ -1870,10 +1902,10 @@ function check_ad_id_length($id_len)
 
 /**
  **
- **/
+**/
 
 
-function check_adv_id_length($id_len) 
+function check_adv_id_length($id_len)
 {
     if ($id_len != 36 && $id_len != 38 && $id_len != 56) {
         if ($GLOBALS['set_gl']['arc'] == 'arc5')

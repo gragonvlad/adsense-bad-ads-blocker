@@ -55,17 +55,12 @@ if (isset($_POST['urls'])) {
     if (@is_object($result->error))
         die('<p>' . $result->error->code . ' ' . $result->error->message . '</p>');
 
-    $list = explode("\n", $_POST['urls']);
-    $out = '';
-
-    foreach ($list as $url) {
-        $url = trim($url);
-        $url = rtrim($url, "/");
-        $out .= $url . '<br />';
+    foreach ($GLOBALS['blocked_urls'] as $blocked_url) {
+        $out .= $blocked_url . "<br />\n";
     }
 
 
-    $out .= '<br />It should be blocked, please don\'t worry. ;)';
+    $out .= "<br />It should be blocked, please don't worry. ;)";
 }
 
 if (isset($_GET['url_to_add'])) {

@@ -26,40 +26,44 @@ unset($first_result);
 
 /**
  * Get first access tokens:
- **/
-
+**/
 get_xsrf_token();
 
-$list = get_advertisers_list();
 
-$out = '';
-$i = 0;
+$advertisers_list = get_advertisers_list();
+//var_dump($advertisers_list);
+
 
 if ($GLOBALS['set_gl']['arc'] == 'arc5')
     $result_keyword = 'default';
 else
     $result_keyword = 'result';
 
-foreach ($list->$result_keyword->{1} as $adv_obj) {
 
-    $adv_id = $adv_obj->{1}->{1}->{1};
-    @$adv_name = trim($adv_obj->{2} . ' ' . $adv_obj->{3});
-    if (@$adv_obj->{2})
-        $accs_ads_filename = md5($adv_obj->{2});
-    else
-        $accs_ads_filename = $adv_obj->{3};
-    if (file_exists($GLOBALS['temp_folder'] . 'accs_ads/' . $accs_ads_filename)) {
-        $adv_title = file_get_contents($GLOBALS['temp_folder'] . 'accs_ads/' . $accs_ads_filename);
-        $list = explode("\n", $adv_title, 2);
-        $adv_title = ' title="' . $adv_title . '"';
-        $ads_first_line = ' ' . mb_substr($list[0], 0, 38, 'UTF-8');
-    } else {
-        $adv_title = '';
-        $ads_first_line = '';
-    }
+/**
+ * Get list of already blocked accounts:
+**/
 
 
-    if (@$_POST['confirmation'] == 'agree') {
+$autoblocked_accs = scandir($GLOBALS['temp_folder'] . 'accs_ads/');
+unset($autoblocked_accs[0], $autoblocked_accs[1]); //removes «.» and «..»
+
+foreach ($autoblocked_accs as $acc_file_name) {
+    
+    $blocked_time = filectime($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $acc_file_name);
+    $blocked_time = date("j.m.Y G:i:s", $blocked_time);
+    $blocked_accs['time'][$acc_file_name] = $blocked_time;
+    $adv_title = file_get_contents($GLOBALS['temp_folder'] . 'accs_ads/' . $acc_file_name);
+    $blocked_accs['ads_texts'][$acc_file_name] = $adv_title;
+}
+
+$out = '';
+$i = 0;
+if (@$_POST['confirmation'] == 'agree') {
+
+    foreach ($advertisers_list as $adv_obj) {
+
+        $adv_id = $adv_obj->{1}->{1}->{1};
         $result = unblock_adwords_account($adv_id);
         if (is_object($result->error))
             die('<p>' . $result->error->code . ' ' . $result->error->message . '</p>');
@@ -68,17 +72,59 @@ foreach ($list->$result_keyword->{1} as $adv_obj) {
         $result = $result[0]->{1};
         if ($result) {
             $result = ' unblocked';
-            $out .= $adv_name . $result . '<br />';
-            unlink($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $adv_obj->{3});
-            unlink($GLOBALS['temp_folder'] . 'accs_ads/' . $accs_ads_filename);
+            @$adv_name = trim($adv_obj->{2} . ' ' . $adv_obj->{3});
+            $out .= $adv_name . $result . "<br>\n";
+            //unlink($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $adv_obj->{3});
+            //unlink($GLOBALS['temp_folder'] . 'accs_ads/' . $accs_ads_filename);
         }
         if ($i >= 100)
             break;
-    } else
-        $out .= "<span$adv_title>$adv_name</span> <a href=\"blocker.php?type=adwords_acc&act=unblock&ad_id=" . rawurlencode($adv_id) . "\" target=\"working_frame\" class=\"unblock unblock_acc\" title=\"Unblock AdWords account\" ><img src=\"img/unblock.png\" />Unblock</a> <a href=\"blocker.php?type=adwords_acc&act=block&ad_id=" .
-            rawurlencode($adv_id) . "\" target=\"working_frame\" class=\"unblock unblock_acc\" title=\"Block AdWords account\" ><img src=\"img/block.png\" />Block</a>$ads_first_line<br />";
-    $i++;
+
+        $i++;
+    }
+
+} else {
+
+    foreach ($advertisers_list as $adv_obj) {
+
+
+        $adv_id = $adv_obj->{1}->{1}->{1};
+        @$adv_name = trim($adv_obj->{2} . ' ' . $adv_obj->{3});
+        if (@$adv_obj->{2})
+            $accs_ads_filename = md5($adv_obj->{2});
+        else
+            $accs_ads_filename = $adv_obj->{3};
+
+        $adv_title = $blocked_accs['ads_texts'][$accs_ads_filename];
+        $list = explode("\n", $adv_title, 2);
+        $adv_title = ' title="' . $adv_title . '"';
+        $ads_first_line = ' ' . mb_substr($list[0], 0, 38, 'UTF-8');
+        
+        $blocked_time = ' <span title="First time blocked">' . $blocked_accs['time'][$accs_ads_filename] . '</span>';
+
+        unset($blocked_accs['time'][$accs_ads_filename]);
+
+        $out .= "<span$adv_title>$adv_name</span> <a href=\"blocker.php?type=adwords_acc&act=unblock&ad_id=" . rawurlencode($adv_id) . 
+        "\" target=\"working_frame\" class=\"unblock unblock_acc\" title=\"Unblock AdWords account\" ><img src=\"img/unblock.png\" />Unblock</a> <a href=\"blocker.php?type=adwords_acc&act=block&ad_id=" .
+        rawurlencode($adv_id) . "\" target=\"working_frame\" class=\"unblock unblock_acc\" title=\"Block AdWords account\" ><img src=\"img/block.png\" />Block</a>$ads_first_line $blocked_time<br>\n";
+        
+        $i++;
+
+    }
+
+    if(count($blocked_accs['time'])>0) {
+        foreach ($blocked_accs['time'] as $file_name => $time) {
+            unlink($GLOBALS['temp_folder'] . 'autoblocked_accs/' . $file_name);            
+            unlink($GLOBALS['temp_folder'] . 'accs_ads/' . $file_name); 
+            echo 'old file ' . $file_name . " was deleted. <br />\n";                       
+        }
+    echo "<br>\n";
+    }
 }
+
+
+
+
 
 if ($GLOBALS['set_gl']['arc'] == 'arc5')
     $check_another_arc = '<a href="advertisers.php?arc=old">Check Accounts from old ARC</a>';
@@ -160,12 +206,12 @@ input[type="submit"], button { max-width: 200px; margin: 3px; }
 	<form method="post" target="working_frame" >
 	
 	<label>
-		Do you want to unblock all accounts?<br />
-		You should type «agree» to confirm.<br />
-		There is 100 accs per time limitation.<br />
-		<input type="text" name="confirmation" placeholder="Type «agree»" required autocomplete="off"/><br />
+		Do you want to unblock all accounts?<br>
+		You should type «agree» to confirm.<br>
+		There is 100 accs per time limitation.<br>
+		<input type="text" name="confirmation" placeholder="Type «agree»" required autocomplete="off"/><br>
 	</label>
-	<br />
+	<br>
 
 	<input class="submit" type="submit" value="Start unblocking process" />
 

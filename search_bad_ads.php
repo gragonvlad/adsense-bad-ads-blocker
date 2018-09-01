@@ -237,7 +237,7 @@ foreach ($search_words as $search_word)
             $by_word = '';
             if ($search_word)
                 $by_word = ' by: ' . $search_word;
-            $no_ads .= "No ads left$by_word<br />\n";
+            $no_ads .= "No ads left$by_word<br>\n";
             break;
         }
 
@@ -329,14 +329,14 @@ foreach ($search_words as $search_word)
                                 $found['word'] = 1;
                                 $adunit['stopword'] = '!' . $stopword;
                                 $adunit['filter'] = 'word';
-                                break;
+                                goto list_ad;
                             }
                         } else {
                             if (mb_stripos($fulltext, $stopword, 0, 'UTF-8') !== false) { //if we can find any bad word
                                 $found['word'] = 1;
                                 $adunit['stopword'] = $stopword;
                                 $adunit['filter'] = 'word';
-                                break;
+                                goto list_ad;
                             }
                         }
                     }
@@ -446,8 +446,8 @@ body { background: #fff; }
 
 <p>
 <?= $no_ads ?>
-Execution time: <?= $exe_time ?>.<br />
-Checked: <?= $checked ?>.<br />
+Execution time: <?= $exe_time ?>.<br>
+Checked: <?= $checked ?>.<br>
 Blocked: <?= $blocked ?>.
 </p>
 <?= $cycle_report ?>
