@@ -780,7 +780,7 @@ function text_ad($html)
             $ad['header2'] = $a_node->textContent;
             continue;
         }
-            $ad['header2'] = $a_node->textContent;
+
         if (stripos($a_node->getAttribute('class'), 'rhbody') !== false) {
             $ad['body'] = $a_node->textContent;
             continue;
