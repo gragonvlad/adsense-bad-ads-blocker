@@ -122,32 +122,31 @@ if ($set['arc'] == 'adx') {
 
 function is_data_safely($input_data)
 {
-    $ret = true;
     if (strpos($input_data, "<?") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "?>") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "strtolower") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "strtoupper") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "{") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "}") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "$") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "strip") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "decode") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "eval") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "chr") !== false)
-        $ret = false;
+        return false;
     if (strpos($input_data, "./") !== false)
-        $ret = false;
-    return $ret;
+        return false;
+    return true;
 }
 
 
