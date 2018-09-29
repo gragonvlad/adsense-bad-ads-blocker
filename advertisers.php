@@ -31,7 +31,6 @@ get_xsrf_token();
 
 
 $advertisers_list = get_advertisers_list();
-//var_dump($advertisers_list);
 
 
 if ($GLOBALS['set_gl']['arc'] == 'arc5')

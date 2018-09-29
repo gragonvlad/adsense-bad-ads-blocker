@@ -16,7 +16,7 @@ again : if (isset($_GET['url'])) {
 
     if (!$renewed) {
         if (@is_object($result->error))
-            if ($result->error->code == '-32000') { // XSRF token validation
+            if ($result->error->code == '-32000' || $result->error->code == '-32001') { // XSRF token validation
                 get_xsrf_token();
                 $renewed = true;
                 goto again;
@@ -45,7 +45,7 @@ if (isset($_POST['urls'])) {
 
     if (!$renewed) {
         if (@is_object($result->error))
-            if ($result->error->code == '-32000') { // XSRF token validation
+            if ($result->error->code == '-32000' || $result->error->code == '-32001') { // XSRF token validation
                 get_xsrf_token();
                 $renewed = true;
                 goto again;
@@ -71,7 +71,7 @@ if (isset($_GET['url_to_add'])) {
 
     if (!$renewed) {
         if (@is_object($result->error))
-            if ($result->error->code == '-32000') { // XSRF token validation
+            if ($result->error->code == '-32000' || $result->error->code == '-32001') { // XSRF token validation
                 get_xsrf_token();
                 $renewed = true;
                 goto again;

@@ -9,7 +9,7 @@ if (is_data_safely($_SERVER['HTTP_USER_AGENT']))
 $settings_folder = basename($GLOBALS['settings_folder']) . '/';
 $cron_folder = dirname($GLOBALS['settings_folder']);
 $html_sep = '';
-$ver = '4.2'; ?>
+$ver = '4.2.2'; ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -395,7 +395,7 @@ alpari.com
 
 	<form method="post" target="working_frame" action="blocker_url.php" class="form_for_urls" onsubmit="start_searching('blocker_url.php', 'working_frame');">
 
-	<textarea name="urls" class="area_for_urls_main" placeholder="Put here list of domains or URLs for block (with or without http://). Each on new line."></textarea>
+	<textarea name="urls" class="area_for_urls_main" placeholder="Put here list of domains or URLs for block (with or without http://). Each on new line."><?="\n\n\n\n\n\n\n\n\n\n\n\n\n\n"?></textarea>
 
 	<input class="submit" type="submit" value="Block URLs" />
 

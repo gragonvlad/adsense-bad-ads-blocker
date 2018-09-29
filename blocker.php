@@ -68,7 +68,7 @@ if (isset($_GET['ad_id'])) {
 
     if (!$renewed) {
         if (@is_object($result->error))
-            if ($result->error->code == '-32000') { // XSRF token validation
+            if ($result->error->code == '-32000' || $result->error->code == '-32001') { // XSRF token validation
                 get_xsrf_token();
                 $renewed = true;
                 goto again;

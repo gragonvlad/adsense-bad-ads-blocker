@@ -295,7 +295,7 @@ foreach ($search_words as $search_word)
 
                 $found['blogspot'] = 0;
                 if (isset($set['blogspot'])) {
-                    if (stripos($adunit['url'], 'blogspot.com') !== false) { //if we can find blogspot.com
+                    if (stripos($adunit['url'], 'blogspot.com') !== false || stripos($adunit['url'], 'blogspot.ru') !== false) { //if we can find blogspot
                         $found['blogspot'] = 1;
                         $adunit['filter'] = 'blogspot';
                         goto list_ad;
