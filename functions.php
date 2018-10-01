@@ -1469,14 +1469,17 @@ function mark_ads_reviewed($ad_id)
 **/
 
 
-function ReportPolicyViolation($adv_id)
+function ReportPolicyViolation($adv_id, $count=1)
 { // Report bad ads function
     if ($GLOBALS['set_gl']['arc'] != 'arc5')
         return 'Use new ARC!'; //Works only with new ARC
+    
+    $params = '{"2":[{"2":true,"173265508":{"1":{"1":"' . $adv_id . '"}}}]}';       //173265508   
+        
+    for($i=1; $i<=$count; $i++) {
+        $result = creative_review_new('ReportPolicyViolation', $params);        
+    }
 
-    $params = '{"2":[{"2":true,"173265508":{"1":{"1":"' . $adv_id . '"}}}]}';
-    //173265508
-    $result = creative_review_new('ReportPolicyViolation', $params);
     unset($params);
     return $result;
 }
@@ -1502,7 +1505,12 @@ function creative_review_new($method, $params)
     foreach ($query as $index => $value)
         $rpc[] = $index . '=' . $value;
 
-    $append = ':1';
+    if(!isset($GLOBALS[$method])) {
+        $GLOBALS[$method]=1;
+    } else {
+        $GLOBALS[$method]++;
+    }
+    $append = ':'.$GLOBALS[$method];
     $query['rpcTrackingId'] = $GLOBALS['creative_review_new_string'] . $method . '?' . implode('&', $rpc) . $append;
     $query = http_build_query($query);
     $url = 'https://www.google.com' . $GLOBALS['creative_review_new_string'] . $method . '?' . $query;

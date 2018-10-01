@@ -107,7 +107,7 @@ if (isset($set['stopwords_check'])) {
     if(is_array($badadlistwords))
     foreach($badadlistwords as $badadlistword)
     $stopwords_text[]=$badadlistword;
-    
+
     */
 }
 
@@ -368,13 +368,13 @@ foreach ($search_words as $search_word)
                     if ($set['arc'] == 'arc5') {
                         if (isset($set['report_words']))
                             if ($adunit['filter'] == 'word')
-                                ReportPolicyViolation($ad_id[$index]);
+                                 ReportPolicyViolation($ad_id[$index], rand(1,12));
                         if (isset($set['report_disg']))
                             if ($adunit['filter'] == 'disguised')
-                                ReportPolicyViolation($ad_id[$index]);
+                                 ReportPolicyViolation($ad_id[$index], rand(1,12));
                         if (isset($set['report_redir']))
                             if ($adunit['filter'] == 'redirect')
-                                ReportPolicyViolation($ad_id[$index]);
+                                 ReportPolicyViolation($ad_id[$index], rand(1,12));
                     }
 
                     list_ad($adunit, $index, $found);
